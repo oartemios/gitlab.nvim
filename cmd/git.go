@@ -41,18 +41,19 @@ func extractGitInfo(refreshGitInfo func() error, getProjectRemoteUrl func() (str
 	}
 
 	/*
-	   This should match following formats:
-	       namespace: namespace, projectName: dummy-test-repo:
-	           https://gitlab.com/namespace/dummy-test-repo.git
-	           git@gitlab.com:namespace/dummy-test-repo.git
-	           ssh://git@gitlab.com/namespace/dummy-test-repo.git
+				   This should match following formats:
+				       namespace: namespace, projectName: dummy-test-repo:
+				           https://gitlab.com/namespace/dummy-test-repo.git
+				           git@gitlab.com:namespace/dummy-test-repo.git
+				           ssh://git@gitlab.com/namespace/dummy-test-repo.git
+		               ssh://git@gitlab.com:8888/namespace/dummy-test-repo.git
 
-	       namespace: namespace/subnamespace, projectName: dummy-test-repo:
-	           ssh://git@gitlab.com/namespace/subnamespace/dummy-test-repo
-	           https://git@gitlab.com/namespace/subnamespace/dummy-test-repo.git
-	           git@git@gitlab.com:namespace/subnamespace/dummy-test-repo.git
+				       namespace: namespace/subnamespace, projectName: dummy-test-repo:
+				           ssh://git@gitlab.com/namespace/subnamespace/dummy-test-repo
+				           https://git@gitlab.com/namespace/subnamespace/dummy-test-repo.git
+				           git@git@gitlab.com:namespace/subnamespace/dummy-test-repo.git
 	*/
-	re := regexp.MustCompile(`(?:^https?:\/\/|^ssh:\/\/|^git@)(?:[^\/:]+)[\/:](.*)\/([^\/]+?)(?:\.git)?$`)
+	re := regexp.MustCompile(`(?:^https?://|^ssh://|^git@)(?:[^\/:]+)[\/:][0-9/]*(.*)\/([^\/]+?)(?:\.git)?$`)
 	matches := re.FindStringSubmatch(url)
 	if len(matches) != 3 {
 		return GitProjectInfo{}, fmt.Errorf("Invalid Git URL format: %s", url)
